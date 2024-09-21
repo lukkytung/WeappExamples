@@ -13,7 +13,7 @@ Page({
     ],
     pickerValue: [0, 0, 0],
     selectedDate: '',
-    leapMonthIndex: -1,
+    leapMonthIndex: -1,// 当前年份中闰月所在的索引，-1为当年无闰月
   },
 
   onLoad() {
