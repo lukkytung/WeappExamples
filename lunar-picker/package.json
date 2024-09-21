@@ -1,0 +1,14 @@
+{
+  "name": "lunar-javascript",
+  "version": "1.0.0",
+  "main": ".eslintrc.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "lunar-javascript": "^1.6.12"
+  }
+}

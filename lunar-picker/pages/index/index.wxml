@@ -1,0 +1,12 @@
+<!--index.wxml-->
+<navigation-bar title="农历选择器" back="{{false}}" color="black" background="#FFF"></navigation-bar>
+<scroll-view class="scrollarea" scroll-y type="list">
+  <view class="container">
+    <picker mode="multiSelector" bindchange="onPickerChange" bindcolumnchange="onColumnChange" range="{{pickerData}}" value="{{pickerValue}}">
+      <view class="picker">
+        选择农历日期：
+        {{selectedDate}}
+      </view>
+    </picker>
+  </view>
+</scroll-view>

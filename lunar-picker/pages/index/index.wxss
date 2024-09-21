@@ -1,0 +1,18 @@
+/**index.wxss**/
+page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.scrollarea {
+  flex: 1;
+  overflow-y: hidden;
+}
+
+.picker {
+  padding: 10px;
+  background-color: #f0f0f0;
+  text-align: center;
+  border-radius: 5px;
+}

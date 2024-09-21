@@ -1,0 +1,16 @@
+<!--index.wxml-->
+
+<navigation-bar title="TODO" back="{{false}}" color="black" background="#FFF"></navigation-bar>
+<view style=" display: flex;flex-direction: column;height: 200rpx;width: 100%;background-color:white;padding: 30rpx;">
+  <view style="height: 60rpx;margin: 30rpx;">
+    <input type="text" placeholder="请输入内容" bindinput="inputchange" />
+  </view>
+  <button bind:tap="addEvent">Add</button>
+</view>
+<scroll-view class="scrollarea" scroll-y type="list">
+  <view class="container">
+    <view style="width: 100%;"  wx:for="{{5}}" wx:key="index">
+      <view style="background-color: pink;margin: 10rpx 0rpx;padding: 30rpx;border-radius: 30rpx;">标题{{index}}</view>
+    </view>
+  </view>
+</scroll-view>
