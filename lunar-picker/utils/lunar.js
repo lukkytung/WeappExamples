@@ -49,8 +49,22 @@ function getLunarDays(year, month) {
   return days;
 }
 
+function convertSolar(year, month, day) {
+  // 实例化
+  var lunar = Lunar.fromYmd(year, month, day);
+
+  console.log(lunar);
+
+  // 转阳历
+  var solar = lunar.getSolar();
+
+  console.log(solar.toString());
+  console.log(solar.toFullString());
+}
+
 module.exports = {
   getLunarYears,
   getLunarMonths,
   getLunarDays,
+  convertSolar,
 };

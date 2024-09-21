@@ -13,7 +13,10 @@ Page({
     ],
     pickerValue: [0, 0, 0],
     selectedDate: '',
-    leapMonthIndex: -1,// 当前年份中闰月所在的索引，-1为当年无闰月
+    selectedYear: 1900,
+    selectedMonth: 1,
+    selectedDay: 1,
+    leapMonthIndex: -1, // 当前年份中闰月所在的索引，-1为当年无闰月
   },
 
   onLoad() {
@@ -40,6 +43,9 @@ Page({
     // 获取对应月份的天数
     const days = lunar.getLunarDays(currentYear, 1);
     this.setData({
+      selectedYear: currentYear,
+      selectedMonth: 1,
+      selectedDay: 1,
       pickerData: [years, months, days],
       selectedDate: `${years[yearIndex]} ${months[0]} ${days[0]}`,
     });
@@ -53,7 +59,9 @@ Page({
     let {
       pickerValue,
       pickerData,
-      years
+      years,
+      selectedYear,
+      selectedMonth
     } = this.data;
 
     if (column === 0) {
@@ -69,31 +77,45 @@ Page({
         return m.includes("闰")
       });
       this.setData({
+        selectedYear,
         pickerData,
         leapMonthIndex,
         pickerValue,
         selectedDate: `${years[value]} ${newMonths[0]} ${newDays[0]}`,
       });
+      lunar.convertSolar(selectedYear, 1, 1)
     } else if (column === 1) {
       // 月份改变，更新天数
       const selectedYear = parseInt(years[pickerValue[0]].slice(0, 5));
       const selectedMonth = pickerData[1][value];
 
       var daysInMonth = [];
+      var monthValue = 1;
       if (selectedMonth.includes("闰")) {
-        daysInMonth = lunar.getLunarDays(selectedYear, value == 0 ? -1 : -value);
+        monthValue = value == 0 ? -1 : -value;
       } else {
-        daysInMonth = lunar.getLunarDays(selectedYear, this.data.leapMonthIndex < 0 || value < this.data.leapMonthIndex ? value + 1 : value);
+        monthValue = this.data.leapMonthIndex < 0 || value < this.data.leapMonthIndex ? value + 1 : value
       }
+      daysInMonth = lunar.getLunarDays(selectedYear, monthValue);
       pickerData[2] = daysInMonth;
       pickerValue = [pickerValue[0], value, 0];
       this.setData({
+        selectedYear,
+        selectedMonth: monthValue,
         pickerData,
         pickerValue,
         selectedDate: `${years[pickerValue[0]]} ${selectedMonth} ${daysInMonth[0]}`,
       });
+      lunar.convertSolar(selectedYear, monthValue, 1)
+    } else {
+      // 滚动日期
+
+      lunar.convertSolar(selectedYear, selectedMonth, value + 1)
+      this.setData({
+        selectedDay: value + 1,
+        selectedDate: `${years[pickerValue[0]]}  ${pickerData[1][selectedMonth]} ${pickerData[2][value]}`,
+      })
     }
-    // 不处理day列的变化，因为它不影响其他列
   },
 
   onPickerChange(e) {
