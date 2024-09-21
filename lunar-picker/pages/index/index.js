@@ -85,7 +85,6 @@ Page({
       } else {
         daysInMonth = lunar.getLunarDays(selectedYear, this.data.leapMonthIndex < 0 || value < this.data.leapMonthIndex ? value + 1 : value);
       }
-
       pickerData[2] = daysInMonth;
       pickerValue = [pickerValue[0], value, 0];
       this.setData({
