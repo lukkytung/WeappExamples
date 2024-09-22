@@ -12,8 +12,8 @@ Page({
     pickerValue: [0, 0, 0],
     selectedDate: '',
     selectedYear: 1900,
-    selectedMonth: 1, // 阳历月份
-    selectedDay: 1, // 阳历日期
+    selectedMonth: 1, // 阳历月份（数字）
+    selectedDay: 1, // 阳历日期（数字）
     leapMonthIndex: -1, // 当前年份中闰月所在的索引，-1为当年无闰月
     selectedSolarDate: '',
   },
@@ -29,7 +29,7 @@ Page({
     const currentYear = new Date().getFullYear();
     const currentMonth = new Date().getMonth() + 1;
     const currentDay = new Date().getDate();
-    // console.log(`Year:${currentYear} Month:${currentMonth} Day:${currentDay}`)
+
     // 将当前阳历日期转为阴历
     const lunarMonth = lunar.convertLunar(currentYear, currentMonth, currentDay).getMonthInChinese()
     const lunarDay = lunar.convertLunar(currentYear, currentMonth, currentDay).getDayInChinese()
@@ -49,18 +49,17 @@ Page({
     const dayIndex = days.findIndex(d => {
       return d.includes(`${lunarDay}`)
     });
+    const d = lunar.currentLunar();
 
     this.setData({
       selectedYear: currentYear,
-      selectedMonth: currentMonth,
-      selectedDay: currentDay,
+      selectedMonth: d.getMonth(),
+      selectedDay: d.getDay(),
       years,
       pickerData: [years, months, days],
       pickerValue: [yearIndex, monthIndex, dayIndex],
       selectedDate: `${years[yearIndex]} ${months[monthIndex]} ${days[dayIndex]}`,
     });
-
-    console.log(`选中的阳历：${currentYear}-${currentMonth}-${currentDay}`);
   },
 
   onColumnChange(e) {
@@ -82,11 +81,21 @@ Page({
       // 年份改变，更新月份和天数
       const selectedYear = parseInt(years[value].slice(0, 5));
       const newMonths = lunar.getLunarMonths(selectedYear);
-      const newDays = lunar.getLunarDays(selectedYear, 1);
+      // 获取当前选中的月份索引
       pickerData[1] = newMonths;
+      const newMonthsIdx = pickerValue[1] >= newMonths.length ? newMonths.length - 1 : pickerValue[1];
+      // 选中的月份（阴历数字，闰年为负数）
+      var monthNum = 1;
+      if (pickerData[1][newMonthsIdx].includes("闰")) {
+        monthNum = newMonthsIdx == 0 ? -1 : -newMonthsIdx;
+      } else {
+        monthNum = this.data.leapMonthIndex < 0 || newMonthsIdx < this.data.leapMonthIndex ? newMonthsIdx + 1 : newMonthsIdx
+      }
+
+      const newDays = lunar.getLunarDays(selectedYear, monthNum);
       pickerData[2] = newDays;
-      const newMonthsIdx = pickerValue[1] > newMonths.length ? newMonths.length - 1 : pickerValue[1];
-      const newDayIdx = pickerValue[2] > newDays.length ? newDays.length - 1 : pickerValue[2];
+
+      const newDayIdx = pickerValue[2] >= newDays.length ? newDays.length - 1 : pickerValue[2];
       pickerValue = [value, newMonthsIdx, newDayIdx];
       // 闰月所在的索引
       const leapMonthIndex = pickerData[1].findIndex(m => {
@@ -94,6 +103,8 @@ Page({
       });
       this.setData({
         selectedYear,
+        selectedMonth: monthNum,
+        selectedDay: newDayIdx + 1,
         pickerData,
         leapMonthIndex,
         pickerValue,
@@ -120,29 +131,28 @@ Page({
       pickerData[2] = daysInMonth;
       pickerValue = [pickerValue[0], value, newDayIdx];
 
-      const solar = lunar.convertSolar(selectedYear, monthNum, newDayIdx + 1)
-      console.log(`阳历：${selectedYear}-${solar.getMonth()}-${solar.getDay()}`);
       this.setData({
         selectedYear,
-        selectedMonth: solar.getMonth(),
+        selectedMonth: monthNum,
         selectedDay: newDayIdx + 1,
         days: daysInMonth,
         pickerData,
         pickerValue,
-        selectedDate: `${years[pickerValue[0]]} ${selectedMonth} ${daysInMonth[newDayIdx]}`,
+        selectedDate: `${years[pickerValue[0]]} ${selectedMonthCN} ${daysInMonth[newDayIdx]}`,
       });
     } else {
       // 滚动日期
       pickerValue[2] = value
       this.setData({
-        selectedDay: value,
+        selectedDay: value + 1,
         pickerValue,
         selectedDate: `${years[pickerValue[0]]} ${pickerData[1][pickerValue[1]]} ${pickerData[2][value]}`,
       })
     }
-    // console.log(`选中的阳历：${selectedYear}-${selectedMonth}-${selectedDay}`);
-    // const date = lunar.convertSolar(selectedYear, selectedMonth, selectedDay)
-    // console.log(date.toString())
+    console.log(`阴历数字：${this.data.selectedYear} ${this.data.selectedMonth} ${this.data.selectedDay}`);
+    const solar = lunar.convertSolar(this.data.selectedYear, this.data.selectedMonth, this.data.selectedDay)
+
+    console.log(`阳历：${solar.getYear()}-${solar.getMonth()}-${solar.getDay()}`);
   },
 
   onPickerChange(e) {
@@ -151,13 +161,23 @@ Page({
     } = e.detail;
     const {
       years,
+      selectedYear,
+      selectedMonth,
+      selectedDay,
       pickerData
     } = this.data;
-    const selectedYear = years[value[0]];
-    const selectedMonth = pickerData[1][value[1]];
-    const selectedDay = pickerData[2][value[2]];
+    const selectedYearStr = years[value[0]];
+    const selectedMonthStr = pickerData[1][value[1]];
+    const selectedDayStr = pickerData[2][value[2]];
     this.setData({
-      selectedDate: `${selectedYear} ${selectedMonth} ${selectedDay}`,
+      selectedDate: `${selectedYearStr} ${selectedMonthStr} ${selectedDayStr}`,
     });
+
+    console.log(`【确定】阴历数字：${selectedYear} ${selectedMonth} ${selectedDay}`);
+    const solar = lunar.convertSolar(selectedYear, selectedMonth, selectedDay)
+    this.setData({
+      selectedSolarDate: solar.toString()
+    })
+    console.log(`【确定】阳历：${solar.getYear()}-${solar.getMonth()}-${solar.getDay()}`);
   },
 });

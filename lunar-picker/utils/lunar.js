@@ -8,6 +8,10 @@ const {
   LunarUtil
 } = require('./lunar-javascript'); // 引入lunar-JavaScript库
 
+function currentLunar(){
+  return Lunar.fromDate(new Date());
+}
+
 function getLunarYears(startYear, endYear) {
   const years = [];
   for (let year = startYear; year <= endYear; year++) {
@@ -88,6 +92,7 @@ function convertLunar(year, month, day) {
 
 
 module.exports = {
+  currentLunar,
   getLunarYears,
   getLunarMonths,
   getLunarDays,
