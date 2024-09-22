@@ -1,6 +1,7 @@
 // utils/lunar.js
 const {
   Lunar,
+  Solar,
   LunarMonth,
   LunarYear,
   LunarSolarConverter,
@@ -38,7 +39,7 @@ function getLunarMonths(year) {
 }
 
 function getLunarDays(year, month) {
-  console.log(`年份：${year} 月份：${month}`)
+  // console.log(`年份：${year} 月份：${month}`)
   var lunarMonth = LunarMonth.fromYm(year, month);
   const days = [];
   for (let d = 1; d <= lunarMonth.getDayCount(); d++) {
@@ -48,23 +49,48 @@ function getLunarDays(year, month) {
 
   return days;
 }
-
+/**
+ * 转为阳历
+ * @param {*} year 
+ * @param {*} month 
+ * @param {*} day 
+ */
 function convertSolar(year, month, day) {
   // 实例化
   var lunar = Lunar.fromYmd(year, month, day);
-
-  console.log(lunar);
+  // console.log(lunar);
 
   // 转阳历
   var solar = lunar.getSolar();
-
-  console.log(solar.toString());
-  console.log(solar.toFullString());
+  // console.log(solar.toString());
+  // console.log(solar.toFullString());
+  return solar
 }
+
+/**
+ * 转为阴历
+ * @param {*} year 
+ * @param {*} month 
+ * @param {*} day 
+ */
+function convertLunar(year, month, day) {
+  // 实例化
+  var solar = Solar.fromDate(new Date(`${year}-${month}-${day}`));
+  // console.log(solar);
+
+  // 转阴历
+  var lunar = solar.getLunar();
+
+  // console.log(lunar.toString());
+  // console.log(lunar.toFullString());
+  return lunar;
+}
+
 
 module.exports = {
   getLunarYears,
   getLunarMonths,
   getLunarDays,
   convertSolar,
+  convertLunar,
 };
