@@ -16,7 +16,7 @@ function getLunarYears(startYear, endYear) {
   const years = [];
   for (let year = startYear; year <= endYear; year++) {
     const lunar = Lunar.fromYmd(year, 1, 1);
-    years.push(` ${year}` + lunar.getYearInGanZhi());
+    years.push(` ${year} ` + lunar.getYearInGanZhi());
     // years.push(` ${year}`);
   }
   return years;
