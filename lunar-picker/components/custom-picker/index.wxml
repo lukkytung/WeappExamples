@@ -1,0 +1,4 @@
+<!--components/custom-picker/index.wxml-->
+<picker mode="multiSelector" bindchange="onPickerChange" bindcolumnchange="onColumnChange" range="{{pickerData}}" value="{{pickerValue}}">
+  <slot></slot>
+</picker>
