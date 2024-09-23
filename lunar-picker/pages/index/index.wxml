@@ -2,9 +2,9 @@
 <navigation-bar title="农历选择器" back="{{false}}" color="black" background="#FFF"></navigation-bar>
 <scroll-view class="scrollarea" scroll-y type="list">
   <view class="container">
-    <custom-picker bind:change="onPickerChange">
+    <custom-picker bind:change="onPickerChange" isSolar="{{false}}">
       <view class="picker">
-        阴历日期：
+        农历日期：
         {{dateLunar}}
       </view>
       <view class="picker">公历日期：{{dateSolar}}</view>

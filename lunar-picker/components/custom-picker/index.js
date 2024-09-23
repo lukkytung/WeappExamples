@@ -13,6 +13,10 @@ Component({
     endYear: {
       type: Number,
       value: 2100,
+    },
+    isSolar: {
+      type: Boolean,
+      value: true,
     }
   },
 
@@ -38,6 +42,30 @@ Component({
   lifetimes: {
     // 生命周期函数，可以为函数，或一个在methods段中定义的方法名
     attached: function () {
+      if (this.properties.isSolar) {
+        this.initSolarPicker()
+      } else {
+        this.initLunarPicker()
+      }
+    },
+    moved: function () {},
+    detached: function () {},
+  },
+
+  /**
+   * 组件的方法列表
+   */
+  methods: {
+    initSolarPicker() {
+      const date = new Date()
+      const dateLunar = lunar.convertLunar(date.getFullYear(), date.getMonth() + 1, date.getDate())
+
+      this.triggerEvent("change", {
+        dateLunar: `${date.getFullYear()} ${dateLunar.getYearInGanZhi()} ${dateLunar.getMonthInChinese()}月 ${dateLunar.getDayInChinese()}`,
+        dateSolar: `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`,
+      })
+    },
+    initLunarPicker() {
       // 初始化年份列表（带天干地支），例如1800到2100
       const years = lunar.getLunarYears(this.properties.startYear, this.properties.endYear);
       this.setData({
@@ -88,14 +116,6 @@ Component({
         dateSolar: dateSolar,
       })
     },
-    moved: function () {},
-    detached: function () {},
-  },
-
-  /**
-   * 组件的方法列表
-   */
-  methods: {
     onColumnChange(e) {
       const {
         column,
@@ -180,6 +200,22 @@ Component({
     },
 
     onPickerChange(e) {
+      if (this.properties.isSolar) {
+        this.solarPickerChange(e);
+      } else {
+        this.lunarPickerChanger(e);
+      }
+    },
+    solarPickerChange(e) {
+      const date = new Date(e.detail.value)
+      const dateLunar = lunar.convertLunar(date.getFullYear(), date.getMonth() + 1, date.getDate())
+
+      this.triggerEvent("change", {
+        dateLunar: `${date.getFullYear()} ${dateLunar.getYearInGanZhi()} ${dateLunar.getMonthInChinese()}月 ${dateLunar.getDayInChinese()}`,
+        dateSolar: `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`,
+      })
+    },
+    lunarPickerChanger(e) {
       const {
         value
       } = e.detail;
@@ -209,6 +245,6 @@ Component({
         dateLunar: selectedDate,
         dateSolar: dateSolar,
       })
-    },
+    }
   }
 })
