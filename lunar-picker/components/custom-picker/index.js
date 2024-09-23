@@ -83,7 +83,7 @@ Component({
         pickerValue: [yearIndex, monthIndex, dayIndex],
         dateSolar,
       });
-      this.triggerEvent("onPickerChange", {
+      this.triggerEvent("change", {
         dateLunar: selectedDate,
         dateSolar: dateSolar,
       })
@@ -205,7 +205,7 @@ Component({
         dateSolar
       })
       // console.log(`【确定】公历：${solar.getYear()}-${solar.getMonth()}-${solar.getDay()}`);
-      this.triggerEvent("onPickerChange", {
+      this.triggerEvent("change", {
         dateLunar: selectedDate,
         dateSolar: dateSolar,
       })
