@@ -1,15 +1,12 @@
 <!--components/custom-picker/index.wxml-->
 <block wx:if="{{isSolar}}">
-  <!-- <picker mode="date" start="0100-01-01" end="3000-12-31" value="{{datePickerValue}}" bindchange="bindDateChange">
-    <slot></slot>
-  </picker> -->
-  <picker mode="date" start="0100-01-01" end="3000-12-31" value="{{datePickerValue}}" bindchange="onPickerChange">
+  <picker mode="date" start="0100-01-01" end="3000-12-31" value="{{solarPickerValue}}" bindchange="onPickerChange">
     <slot></slot>
   </picker>
 </block>
 
 <block wx:else>
-  <picker mode="multiSelector" bindchange="onPickerChange" bindcolumnchange="onColumnChange" range="{{pickerData}}" value="{{pickerValue}}">
+  <picker mode="multiSelector" bindchange="onPickerChange" bindcolumnchange="onColumnChange" range="{{pickerData}}" value="{{lunarPickerValue}}">
     <slot></slot>
   </picker>
 </block>

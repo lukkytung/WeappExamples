@@ -4,7 +4,8 @@ const lunar = require('../../utils/lunar.js');
 Page({
   data: {
     dateLunar: "",
-    dateSolar: ""
+    dateSolar: "",
+    checked: true,
   },
   onLoad(options) {
 
@@ -18,6 +19,12 @@ Page({
     this.setData({
       dateLunar,
       dateSolar
+    })
+  },
+  onSwitchChange(e) {
+    const checked = e.detail.value
+    this.setData({
+      checked
     })
   }
 });

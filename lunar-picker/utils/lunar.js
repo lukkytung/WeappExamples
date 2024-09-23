@@ -77,8 +77,10 @@ function convertSolar(year, month, day) {
  * @param {*} month 
  * @param {*} day 
  */
-function convertLunar(year, month, day) {
+function convertLunar(yearNum, monthNum, dayNum) {
   // 实例化
+  const dateStr = `${yearNum}-${monthNum}-${dayNum}`;
+  let [year, month, day] = dateStr.split('-').map(part => part.padStart(2, '0')); 
   var solar = Solar.fromDate(new Date(`${year}-${month}-${day}`));
   // console.log(solar);
 

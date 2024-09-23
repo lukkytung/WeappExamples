@@ -17,6 +17,21 @@ Component({
     isSolar: {
       type: Boolean,
       value: true,
+      observer: function (newVal, oldVal) {
+        if (newVal) {
+          this.configSolarPicker()
+        } else {
+          this.configLunarPicker()
+        }
+      }
+    },
+    solarPickerValue: {
+      type: String,
+      value: "",
+    },
+    lunarPickerValue: {
+      type: [],
+      value: [0, 0, 0],
     }
   },
 
@@ -30,7 +45,7 @@ Component({
       [],
       []
     ],
-    pickerValue: [0, 0, 0],
+    lunarPickerValue: [0, 0, 0],
     selectedDate: '',
     yearNum: 2024,
     monthNum: 1, // 阳历月份（数字）
@@ -43,20 +58,18 @@ Component({
     // 生命周期函数，可以为函数，或一个在methods段中定义的方法名
     attached: function () {
       if (this.properties.isSolar) {
-        this.initSolarPicker()
+        this.configSolarPicker()
       } else {
-        this.initLunarPicker()
+        this.configLunarPicker()
       }
     },
-    moved: function () {},
-    detached: function () {},
   },
 
   /**
    * 组件的方法列表
    */
   methods: {
-    initSolarPicker() {
+    configSolarPicker() {
       const date = new Date()
       const dateLunar = lunar.convertLunar(date.getFullYear(), date.getMonth() + 1, date.getDate())
 
@@ -65,7 +78,7 @@ Component({
         dateSolar: `${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`,
       })
     },
-    initLunarPicker() {
+    configLunarPicker() {
       // 初始化年份列表（带天干地支），例如1800到2100
       const years = lunar.getLunarYears(this.properties.startYear, this.properties.endYear);
       this.setData({
@@ -108,7 +121,7 @@ Component({
         years,
         selectedDate,
         pickerData: [years, months, days],
-        pickerValue: [yearIndex, monthIndex, dayIndex],
+        lunarPickerValue: [yearIndex, monthIndex, dayIndex],
         dateSolar,
       });
       this.triggerEvent("change", {
@@ -122,7 +135,7 @@ Component({
         value
       } = e.detail;
       let {
-        pickerValue,
+        lunarPickerValue,
         pickerData,
         years,
       } = this.data;
@@ -133,7 +146,7 @@ Component({
         const newMonths = lunar.getLunarMonths(yearNum);
         // 获取当前选中的月份索引
         pickerData[1] = newMonths;
-        const newMonthsIdx = pickerValue[1] >= newMonths.length ? newMonths.length - 1 : pickerValue[1];
+        const newMonthsIdx = lunarPickerValue[1] >= newMonths.length ? newMonths.length - 1 : lunarPickerValue[1];
         // 选中的月份（阴历数字，闰年为负数）
         var monthNum = 1;
         if (pickerData[1][newMonthsIdx].includes("闰")) {
@@ -145,8 +158,8 @@ Component({
         const newDays = lunar.getLunarDays(yearNum, monthNum);
         pickerData[2] = newDays;
 
-        const newDayIdx = pickerValue[2] >= newDays.length ? newDays.length - 1 : pickerValue[2];
-        pickerValue = [value, newMonthsIdx, newDayIdx];
+        const newDayIdx = lunarPickerValue[2] >= newDays.length ? newDays.length - 1 : lunarPickerValue[2];
+        lunarPickerValue = [value, newMonthsIdx, newDayIdx];
         // 闰月所在的索引
         const leapMonthIndex = pickerData[1].findIndex(m => {
           return m.includes("闰")
@@ -157,12 +170,12 @@ Component({
           dayNum: newDayIdx + 1,
           pickerData,
           leapMonthIndex,
-          pickerValue,
+          lunarPickerValue,
           // selectedDate: `${years[value]} ${newMonths[newMonthsIdx]} ${newDays[newDayIdx]}`,
         });
       } else if (column === 1) {
         // 月份改变，更新天数
-        const yearNum = parseInt(years[pickerValue[0]].slice(0, 5));
+        const yearNum = parseInt(years[lunarPickerValue[0]].slice(0, 5));
         // 选中的月份中文（阴历）
         const selectedMonthCN = pickerData[1][value];
 
@@ -176,10 +189,10 @@ Component({
         }
         daysInMonth = lunar.getLunarDays(yearNum, monthNum);
 
-        const newDayIdx = pickerValue[2] >= daysInMonth.length ? daysInMonth.length - 1 : pickerValue[2];
+        const newDayIdx = lunarPickerValue[2] >= daysInMonth.length ? daysInMonth.length - 1 : lunarPickerValue[2];
 
         pickerData[2] = daysInMonth;
-        pickerValue = [pickerValue[0], value, newDayIdx];
+        lunarPickerValue = [lunarPickerValue[0], value, newDayIdx];
 
         this.setData({
           yearNum,
@@ -187,14 +200,14 @@ Component({
           dayNum: newDayIdx + 1,
           days: daysInMonth,
           pickerData,
-          pickerValue,
+          lunarPickerValue,
         });
       } else {
         // 滚动日期
-        pickerValue[2] = value
+        lunarPickerValue[2] = value
         this.setData({
           dayNum: value + 1,
-          pickerValue,
+          lunarPickerValue,
         })
       }
     },
