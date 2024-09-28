@@ -1,0 +1,6 @@
+<!--components/calendar-switch/index.wxml-->
+<view class="switch-container">
+  <view class="switch-item {{ current === 'solar' ? 'active' : '' }}" bindtap="toggleSwitch" data-type="solar">公历</view>
+
+  <view class="switch-item {{ current === 'lunar' ? 'active' : '' }}" bindtap="toggleSwitch" data-type="lunar">农历</view>
+</view>
